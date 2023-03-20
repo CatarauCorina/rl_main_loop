@@ -240,7 +240,7 @@ def main():
     env_loader = AnimalAIEnvironmentLoader()
     env = env_loader.get_animalai_env()
 
-    wandb_logger = Logger("animal_ai_convdqn_baseline", project='rl_loop')
+    wandb_logger = Logger("animal_ai_convdqn_baseline_colab", project='rl_loop')
     logger = wandb_logger.get_logger()
     trainer = TrainModel(DQN,
                          env, (True, 1000),
