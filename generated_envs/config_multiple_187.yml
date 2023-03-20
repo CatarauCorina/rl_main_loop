@@ -1,0 +1,55 @@
+#An example configure file
+!ArenaConfig
+arenas:
+  0: !Arena
+    pass_mark: 2.0
+    t: 250
+    items:
+    - !Item
+      name: Agent
+      positions: 
+      - !Vector3 {x: 20, y: 0, z: 15}
+      rotations: [0]
+    - !Item
+      name: Cardbox2
+      positions: 
+      - !Vector3 {x: 9, y: 0, z: 22}
+      rotations: [236]
+      sizes: 
+      - !Vector3 {x: 2, y: 1, z: 9}
+    - !Item
+      name: CylinderTunnel
+      positions: 
+      - !Vector3 {x: 23, y: 0, z: 18}
+      rotations: [130]
+      sizes: 
+      - !Vector3 {x: 5, y: 8, z: 3}
+      colors: 
+      - !RGB {r: 99, g: 16, b: 74}
+    - !Item
+      name: LObject
+      positions: 
+      - !Vector3 {x: 20, y: 0, z: 25}
+      rotations: [77]
+      sizes: 
+      - !Vector3 {x: 5, y: 13, z: 3}
+      colors: 
+      - !RGB {r: 40, g: 61, b: 76}
+    - !Item
+      name: Wall
+      positions: 
+      - !Vector3 {x: 13, y: 0, z: 17}
+      rotations: [155]
+      sizes: 
+      - !Vector3 {x: 4, y: 4, z: 7}
+      colors: 
+      - !RGB {r: 192, g: 132, b: 12}
+    - !Item
+      name: LObject
+      positions: 
+      - !Vector3 {x: 14, y: 0, z: 29}
+      rotations: [11]
+      sizes: 
+      - !Vector3 {x: 12, y: 1, z: 13}
+      colors: 
+      - !RGB {r: 34, g: 187, b: 38}

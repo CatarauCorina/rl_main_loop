@@ -1,0 +1,26 @@
+2023-03-20 22:32:48,071 INFO    MainThread:4936 [wandb_setup.py:_flush():76] Configure stats pid to 4936
+2023-03-20 22:32:48,072 INFO    MainThread:4936 [wandb_setup.py:_flush():76] Loading settings from C:\Users\WorkStation\.config\wandb\settings
+2023-03-20 22:32:48,072 INFO    MainThread:4936 [wandb_setup.py:_flush():76] Loading settings from C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\settings
+2023-03-20 22:32:48,072 INFO    MainThread:4936 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2023-03-20 22:32:48,072 INFO    MainThread:4936 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'trainer.py', 'program': 'C:/Users/WorkStation/Documents/animal-ai-main/animal-ai-main/baseline_models/trainer.py'}
+2023-03-20 22:32:48,072 INFO    MainThread:4936 [wandb_init.py:_log_setup():461] Logging user logs to C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\run-20230320_223248-20uzyf41\logs\debug.log
+2023-03-20 22:32:48,072 INFO    MainThread:4936 [wandb_init.py:_log_setup():462] Logging internal logs to C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\run-20230320_223248-20uzyf41\logs\debug-internal.log
+2023-03-20 22:32:48,072 INFO    MainThread:4936 [wandb_init.py:init():495] calling init triggers
+2023-03-20 22:32:48,072 INFO    MainThread:4936 [wandb_init.py:init():498] wandb.init called with sweep_config: {}
+config: {}
+2023-03-20 22:32:48,072 INFO    MainThread:4936 [wandb_init.py:init():548] starting backend
+2023-03-20 22:32:48,073 INFO    MainThread:4936 [backend.py:_multiprocessing_setup():97] multiprocessing start_methods=spawn, using: spawn
+2023-03-20 22:32:48,078 INFO    MainThread:4936 [backend.py:ensure_launched():217] starting backend process...
+2023-03-20 22:32:49,133 INFO    MainThread:4936 [backend.py:ensure_launched():222] started backend process with pid: 16364
+2023-03-20 22:32:49,134 INFO    MainThread:4936 [wandb_init.py:init():558] backend started and connected
+2023-03-20 22:32:49,135 INFO    MainThread:4936 [wandb_init.py:init():634] updated telemetry
+2023-03-20 22:32:49,139 INFO    MainThread:4936 [wandb_init.py:init():665] communicating run to backend with 30 second timeout
+2023-03-20 22:32:50,471 INFO    MainThread:4936 [wandb_run.py:_on_init():1919] communicating current version
+2023-03-20 22:32:50,738 INFO    MainThread:4936 [wandb_run.py:_on_init():1923] got version response upgrade_message: "wandb version 0.14.0 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2023-03-20 22:32:50,739 INFO    MainThread:4936 [wandb_init.py:init():700] starting run threads in backend
+2023-03-20 22:32:51,058 INFO    MainThread:4936 [wandb_run.py:_console_start():1893] atexit reg
+2023-03-20 22:32:51,058 INFO    MainThread:4936 [wandb_run.py:_redirect():1766] redirect: SettingsConsole.WRAP
+2023-03-20 22:32:51,059 INFO    MainThread:4936 [wandb_run.py:_redirect():1803] Wrapping output streams.
+2023-03-20 22:32:51,062 INFO    MainThread:4936 [wandb_run.py:_redirect():1827] Redirects installed.
+2023-03-20 22:32:51,063 INFO    MainThread:4936 [wandb_init.py:init():732] run started, returning control to user process

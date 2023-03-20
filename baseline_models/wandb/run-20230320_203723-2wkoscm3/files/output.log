@@ -1,0 +1,1 @@
+C:\Users\WorkStation\Envs\animalai\lib\site-packages\torchvision\transforms\transforms.py:280: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.

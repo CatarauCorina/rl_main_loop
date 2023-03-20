@@ -1,0 +1,17 @@
+C:\Users\WorkStation\Envs\animalai\lib\site-packages\torchvision\transforms\transforms.py:280: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
+  warnings.warn(
+C:\Users\WorkStation\Envs\animalai\lib\site-packages\torchvision\transforms\transforms.py:280: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
+  warnings.warn(
+Traceback (most recent call last):
+  File "C:\Program Files\JetBrains\PyCharm 2020.2.1\plugins\python\helpers\pydev\pydevd.py", line 1448, in _exec
+    pydev_imports.execfile(file, globals, locals)  # execute the script
+  File "C:\Program Files\JetBrains\PyCharm 2020.2.1\plugins\python\helpers\pydev\_pydev_imps\_pydev_execfile.py", line 18, in execfile
+    exec(compile(contents+"\n", file, 'exec'), glob, loc)
+  File "C:/Users/WorkStation/Documents/animal-ai-main/animal-ai-main/baseline_models/trainer.py", line 259, in <module>
+    main()
+  File "C:/Users/WorkStation/Documents/animal-ai-main/animal-ai-main/baseline_models/trainer.py", line 250, in main
+    trainer.init_model()
+  File "C:/Users/WorkStation/Documents/animal-ai-main/animal-ai-main/baseline_models/trainer.py", line 102, in init_model
+    self.run_train(target_net, policy_net, self.memory, self.params, optimizer, self.writer)
+  File "C:/Users/WorkStation/Documents/animal-ai-main/animal-ai-main/baseline_models/trainer.py", line 55, in run_train
+    _, reward, done, _, _ = self.env.step(action.item())

@@ -1,0 +1,257 @@
+import random
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+from collections import namedtuple
+from itertools import count
+from PIL import Image
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
+import torchvision.transforms as T
+
+from baseline_models.logger import Logger
+from baseline_models.conv_dqn import DQN
+from baseline_models.animalai_loader import AnimalAIEnvironmentLoader
+
+
+envs_to_run = []
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward'))
+
+
+class TrainModel(object):
+
+    def __init__(self, model, env, memory=(True, 1000), writer=None, params={}):
+        self.model_to_train = model
+        self.env = env
+        self.use_memory = memory
+        self.memory=None
+        self.writer = writer
+        self.params = params
+
+    def run_train(self, target_net, policy_net, memory, params, optimizer, writer):
+        episode_durations = []
+        num_episodes = 10000
+        steps_done = 0
+        for i_episode in range(num_episodes):
+            # Initialize the environment and state
+            self.env.reset()
+            last_screen = self.process_frames()
+            current_screen = self.process_frames()
+            state = current_screen - last_screen
+            rew_ep = 0
+            loss_ep = 0
+            for t in count():
+                # Select and perform an action
+                action, steps_done = self.select_action(state, params, policy_net, self.env.action_space.n, steps_done)
+
+                _, reward, done, _ = self.env.step(action.item())
+                reward = torch.tensor([reward], device=device)
+
+                rew_ep += reward.item()
+                # Observe new state
+                last_screen = current_screen
+                current_screen = self.process_frames()
+                if not done:
+                    next_state = current_screen
+                else:
+                    next_state = None
+
+                # Store the transition in memory
+                memory.push(state, action, next_state, reward)
+
+                # Move to the next state
+                state = next_state
+
+                # Perform one step of the optimization (on the target network)
+                loss_ep = self.optimize_model(policy_net, target_net, params, memory, optimizer, loss_ep, writer)
+
+                if done:
+                    episode_durations.append(t + 1)
+                    writer.log({"Reward episode": rew_ep, "Episode duration": t + 1, "Train loss": loss_ep / (t + 1)})
+                    print(loss_ep / (t + 1))
+                    break
+            # Update the target network, copying all weights and biases in DQN
+            if i_episode % params['target_update'] == 0:
+                target_net.load_state_dict(policy_net.state_dict())
+            if i_episode % 1000 == 0:
+                self.evaluate(target_net, writer, i_episode)
+        return
+
+    def init_model(self):
+        init_screen = self.process_frames()
+        self.env.reset()
+        _, _, screen_height, screen_width = init_screen.shape
+        n_actions = self.env.action_space.n
+
+        policy_net = self.model_to_train(screen_height, screen_width, n_actions).to(device)
+        target_net = self.model_to_train(screen_height, screen_width, n_actions).to(device)
+        target_net.load_state_dict(policy_net.state_dict())
+        target_net.eval()
+
+        optimizer = optim.RMSprop(policy_net.parameters())
+        if self.use_memory[0] is not None:
+            self.memory = ReplayMemory(self.use_memory[1])
+            self.run_train(target_net, policy_net, self.memory, self.params, optimizer, self.writer)
+        return
+
+    def process_frames(self):
+
+        resize = T.Compose([T.ToPILImage(),
+                            T.Resize(64, interpolation=Image.CUBIC),
+                            T.Grayscale(),
+                            T.ToTensor()])
+        obs = self.env.reset()
+        screen = obs.transpose((2, 0, 1))
+        _, screen_height, screen_width = screen.shape
+        screen = torch.tensor(screen)
+        return resize(screen).unsqueeze(0).to(device)
+
+    def select_action(self, state, params, policy_net, n_actions, steps_done):
+
+        sample = random.random()
+        eps_threshold = 0.8
+        # eps_threshold = params['eps_end'] + (params['eps_start'] - params['eps_end']) * \
+        #     math.exp(-1. * steps_done / params['eps_decay'])
+        steps_done += 1
+        if sample > eps_threshold:
+            with torch.no_grad():
+                # t.max(1) will return largest column value of each row.
+                # second column on max result is index of where max element was
+                # found, so we pick action with the larger expected reward.
+                #Exploiting
+                return policy_net(state).max(1)[1].view(1, 1), steps_done
+        else:
+            return torch.tensor([[random.randrange(n_actions)]], device=device, dtype=torch.long), steps_done
+
+    def optimize_model(self, policy_net, target_net, params, memory, optimizer, loss_ep, writer):
+        if len(memory) < params['batch_size']:
+            return loss_ep
+        transitions = memory.sample(params['batch_size'])
+        # Transpose the batch (see https://stackoverflow.com/a/19343/3343043 for
+        # detailed explanation). This converts batch-array of Transitions
+        # to Transition of batch-arrays.
+        batch = Transition(*zip(*transitions))
+
+        # Compute a mask of non-final states and concatenate the batch elements
+        # (a final state would've been the one after which simulation ended)
+        non_final_mask = torch.tensor(
+            tuple(map(lambda s: s is not None, batch.next_state)), device=device, dtype=torch.bool)
+        non_final_next_states = torch.cat(
+            [s for s in batch.next_state if s is not None])
+        state_batch = torch.cat(batch.state)
+        action_batch = torch.cat(batch.action)
+        reward_batch = torch.tensor(batch.reward, dtype=torch.float32)
+
+        # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
+        # columns of actions taken. These are the actions which would've been taken
+        # for each batch state according to policy_net
+        state_action_values = policy_net(state_batch).gather(1, action_batch)
+
+        # Compute V(s_{t+1}) for all next states.
+        # Expected values of actions for non_final_next_states are computed based
+        # on the "older" target_net; selecting their best reward with max(1)[0].
+        # This is merged based on the mask, such that we'll have either the expected
+        # state value or 0 in case the state was final.
+        next_state_values = torch.zeros(params['batch_size'], device=device)
+        next_state_values[non_final_mask] = target_net(non_final_next_states).max(1)[0].detach()
+        # Compute the expected Q values
+        reward_batch = torch.tensor(reward_batch, dtype=torch.float32).to(device)
+        writer.log({'Batch reward': reward_batch.sum().output_nr})
+        expected_state_action_values = (next_state_values * params['gamma']) + reward_batch
+
+        # Compute Huber loss
+        loss = F.smooth_l1_loss(state_action_values, expected_state_action_values.unsqueeze(1))
+        loss_ep = loss_ep + loss.item()
+
+        # Optimize the model
+        optimizer.zero_grad()
+        loss.backward()
+        for param in policy_net.parameters():
+            param.grad.data.clamp_(-1, 1)
+        optimizer.step()
+        return loss_ep
+
+    def evaluate(self, target_net, writer, i_episode):
+        with torch.no_grad():
+            # Initialize the environment and state
+            self.env.reset()
+            last_screen = self.process_frames()
+            current_screen = self.process_frames()
+            state = current_screen - last_screen
+            rew_ep = 0
+            for t in count():
+                action = target_net(state).max(1)[1].view(1, 1)
+                _, reward, done, _, _ = self.env.step(action.item())
+                reward = torch.tensor([reward], device=device)
+                rew_ep += reward.item()
+                state = self.process_frames() - state
+                if done:
+                    writer.add_scalar('Reward ep test', rew_ep, i_episode)
+                    writer.log({"Reward episode test": rew_ep})
+                    break
+        return
+
+
+class ReplayMemory(object):
+
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.memory = []
+        self.position = 0
+
+    def push(self, *args):
+        """Saves a transition."""
+        if len(self.memory) < self.capacity:
+            self.memory.append(None)
+        self.memory[self.position] = Transition(*args)
+        self.position = (self.position + 1) % self.capacity
+
+    def sample(self, batch_size):
+        return random.sample(self.memory, batch_size)
+
+    def __len__(self):
+        return len(self.memory)
+
+
+def process_frames_a(state):
+    resize = T.Compose([T.ToPILImage(),
+                        T.Grayscale(),
+                        T.ToTensor()])
+    screen = torch.tensor(state).T
+    return resize(screen).to(device)
+
+
+def main():
+    params = {
+        'batch_size': 128,
+        'gamma': 0.999,
+        'eps_start': 0.9,
+        'eps_end':0.05,
+        'eps_decay': 200,
+        'target_update': 100
+    }
+
+    env_loader = AnimalAIEnvironmentLoader()
+    env = env_loader.get_animalai_env()
+
+    wandb_logger = Logger("animal_ai_convdqn_baseline", project='rl_loop')
+    logger = wandb_logger.get_logger()
+    trainer = TrainModel(DQN,
+                         env, (True, 1000),
+                         logger, params)
+    trainer.init_model()
+
+
+    # run_lin_dqn(env, params, logger)
+    # #run_conv_dqn(env, params, writer)
+
+    return
+
+if __name__ == '__main__':
+    main()

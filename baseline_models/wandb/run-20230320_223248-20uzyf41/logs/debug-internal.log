@@ -1,0 +1,69 @@
+2023-03-20 22:32:50,063 INFO    MainThread:16364 [internal.py:wandb_internal():90] W&B internal server running at pid: 16364, started at: 2023-03-20 22:32:50.062823
+2023-03-20 22:32:50,068 INFO    WriterThread:16364 [datastore.py:open_for_write():75] open: C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\run-20230320_223248-20uzyf41\run-20uzyf41.wandb
+2023-03-20 22:32:50,090 DEBUG   SenderThread:16364 [sender.py:send():236] send: header
+2023-03-20 22:32:50,090 DEBUG   SenderThread:16364 [sender.py:send():236] send: run
+2023-03-20 22:32:50,474 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: check_version
+2023-03-20 22:32:50,478 INFO    SenderThread:16364 [dir_watcher.py:__init__():216] watching files in: C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\run-20230320_223248-20uzyf41\files
+2023-03-20 22:32:50,479 INFO    SenderThread:16364 [sender.py:_start_run_threads():815] run started: 20uzyf41 with start time 1679344369
+2023-03-20 22:32:50,479 DEBUG   SenderThread:16364 [sender.py:send():236] send: summary
+2023-03-20 22:32:50,480 INFO    SenderThread:16364 [sender.py:_save_file():952] saving file wandb-summary.json with policy end
+2023-03-20 22:32:50,480 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: check_version
+2023-03-20 22:32:50,744 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: run_start
+2023-03-20 22:32:50,761 DEBUG   HandlerThread:16364 [meta.py:__init__():35] meta init
+2023-03-20 22:32:50,761 DEBUG   HandlerThread:16364 [meta.py:__init__():49] meta init done
+2023-03-20 22:32:50,761 DEBUG   HandlerThread:16364 [meta.py:probe():209] probe
+2023-03-20 22:32:50,798 DEBUG   HandlerThread:16364 [git.py:repo():29] git repository is invalid
+2023-03-20 22:32:50,798 DEBUG   HandlerThread:16364 [meta.py:_save_pip():53] save pip
+2023-03-20 22:32:50,799 DEBUG   HandlerThread:16364 [meta.py:_save_pip():67] save pip done
+2023-03-20 22:32:50,800 DEBUG   HandlerThread:16364 [meta.py:probe():247] probe done
+2023-03-20 22:32:51,046 DEBUG   SenderThread:16364 [sender.py:send():236] send: files
+2023-03-20 22:32:51,046 INFO    SenderThread:16364 [sender.py:_save_file():952] saving file wandb-metadata.json with policy now
+2023-03-20 22:32:51,063 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:32:51,064 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:32:51,325 DEBUG   SenderThread:16364 [sender.py:send():236] send: telemetry
+2023-03-20 22:32:51,494 INFO    Thread-16 :16364 [dir_watcher.py:_on_file_created():269] file/dir created: C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\run-20230320_223248-20uzyf41\files\wandb-summary.json
+2023-03-20 22:32:51,495 INFO    Thread-16 :16364 [dir_watcher.py:_on_file_created():269] file/dir created: C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\run-20230320_223248-20uzyf41\files\output.log
+2023-03-20 22:32:51,495 INFO    Thread-16 :16364 [dir_watcher.py:_on_file_created():269] file/dir created: C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\run-20230320_223248-20uzyf41\files\wandb-metadata.json
+2023-03-20 22:32:51,496 INFO    Thread-16 :16364 [dir_watcher.py:_on_file_created():269] file/dir created: C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\run-20230320_223248-20uzyf41\files\requirements.txt
+2023-03-20 22:32:51,856 INFO    Thread-20 :16364 [upload_job.py:push():138] Uploaded file C:\Users\WORKST~1\AppData\Local\Temp\tmpl1ffb4ekwandb\3htt3vn1-wandb-metadata.json
+2023-03-20 22:32:57,552 INFO    Thread-16 :16364 [dir_watcher.py:_on_file_modified():286] file/dir modified: C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\run-20230320_223248-20uzyf41\files\output.log
+2023-03-20 22:33:06,336 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:33:06,337 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:33:21,664 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:33:21,664 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:33:21,774 INFO    Thread-16 :16364 [dir_watcher.py:_on_file_modified():286] file/dir modified: C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\run-20230320_223248-20uzyf41\files\config.yaml
+2023-03-20 22:33:22,040 DEBUG   SenderThread:16364 [sender.py:send():236] send: stats
+2023-03-20 22:33:36,940 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:33:36,941 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:33:52,222 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:33:52,223 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:33:55,440 DEBUG   SenderThread:16364 [sender.py:send():236] send: stats
+2023-03-20 22:34:07,515 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:34:07,515 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:34:22,797 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:34:22,797 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:34:28,761 DEBUG   SenderThread:16364 [sender.py:send():236] send: stats
+2023-03-20 22:34:38,089 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:34:38,089 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:34:53,394 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:34:53,394 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:35:02,083 DEBUG   SenderThread:16364 [sender.py:send():236] send: stats
+2023-03-20 22:35:08,767 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:35:08,767 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:35:24,085 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:35:24,085 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:35:29,908 INFO    Thread-16 :16364 [dir_watcher.py:_on_file_modified():286] file/dir modified: C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\run-20230320_223248-20uzyf41\files\output.log
+2023-03-20 22:35:35,502 DEBUG   SenderThread:16364 [sender.py:send():236] send: stats
+2023-03-20 22:35:39,372 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:35:39,372 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:35:54,124 INFO    Thread-16 :16364 [dir_watcher.py:_on_file_modified():286] file/dir modified: C:\Users\WorkStation\Documents\animal-ai-main\animal-ai-main\baseline_models\wandb\run-20230320_223248-20uzyf41\files\output.log
+2023-03-20 22:35:54,666 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:35:54,666 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:36:08,711 DEBUG   SenderThread:16364 [sender.py:send():236] send: stats
+2023-03-20 22:36:09,968 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:36:09,968 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:36:25,267 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:36:25,268 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:36:40,556 DEBUG   HandlerThread:16364 [handler.py:handle_request():140] handle_request: stop_status
+2023-03-20 22:36:40,557 DEBUG   SenderThread:16364 [sender.py:send_request():250] send_request: stop_status
+2023-03-20 22:36:42,032 DEBUG   SenderThread:16364 [sender.py:send():236] send: stats

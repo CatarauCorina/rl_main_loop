@@ -1,0 +1,24 @@
+#An example configure file
+!ArenaConfig
+arenas:
+  0: !Arena
+    pass_mark: 2.0
+    t: 250
+    items:
+    - !Item
+      name: Agent
+      positions: 
+      - !Vector3 {x: 20, y: 0, z: 15}
+      rotations: [0]
+    - !Item
+      name: GoodGoal
+      positions: 
+      - !Vector3 {x: 15, y: 0, z: 17}
+      sizes: 
+      - !Vector3 {x: 10, y: 10, z: 10}
+    - !Item
+      name: BadGoal
+      positions: 
+      - !Vector3 {x: 9, y: 0, z: 21}
+      sizes: 
+      - !Vector3 {x: 8, y: 8, z: 8}

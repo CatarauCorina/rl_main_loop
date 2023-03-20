@@ -1,0 +1,48 @@
+#An example configure file
+!ArenaConfig
+arenas:
+  0: !Arena
+    pass_mark: 2.0
+    t: 250
+    items:
+    - !Item
+      name: Agent
+      positions: 
+      - !Vector3 {x: 20, y: 0, z: 15}
+      rotations: [0]
+    - !Item
+      name: Wall
+      positions: 
+      - !Vector3 {x: 13, y: 0, z: 22}
+      rotations: [59]
+      sizes: 
+      - !Vector3 {x: 7, y: 5, z: 9}
+      colors: 
+      - !RGB {r: 19, g: 90, b: 177}
+    - !Item
+      name: Wall
+      positions: 
+      - !Vector3 {x: 32, y: 0, z: 29}
+      rotations: [109]
+      sizes: 
+      - !Vector3 {x: 5, y: 14, z: 3}
+      colors: 
+      - !RGB {r: 214, g: 153, b: 124}
+    - !Item
+      name: Wall
+      positions: 
+      - !Vector3 {x: 11, y: 0, z: 26}
+      rotations: [104]
+      sizes: 
+      - !Vector3 {x: 5, y: 5, z: 8}
+      colors: 
+      - !RGB {r: 47, g: 31, b: 151}
+    - !Item
+      name: Wall
+      positions: 
+      - !Vector3 {x: 22, y: 0, z: 20}
+      rotations: [104]
+      sizes: 
+      - !Vector3 {x: 1, y: 4, z: 10}
+      colors: 
+      - !RGB {r: 204, g: 213, b: 223}

@@ -1,0 +1,48 @@
+#An example configure file
+!ArenaConfig
+arenas:
+  0: !Arena
+    pass_mark: 2.0
+    t: 250
+    items:
+    - !Item
+      name: Agent
+      positions: 
+      - !Vector3 {x: 20, y: 0, z: 15}
+      rotations: [0]
+    - !Item
+      name: UObject
+      positions: 
+      - !Vector3 {x: 30, y: 0, z: 20}
+      rotations: [115]
+      sizes: 
+      - !Vector3 {x: 1, y: 12, z: 3}
+      colors: 
+      - !RGB {r: 22, g: 2, b: 148}
+    - !Item
+      name: CylinderTunnel
+      positions: 
+      - !Vector3 {x: 31, y: 0, z: 23}
+      rotations: [267]
+      sizes: 
+      - !Vector3 {x: 5, y: 11, z: 4}
+      colors: 
+      - !RGB {r: 212, g: 192, b: 57}
+    - !Item
+      name: CylinderTunnel
+      positions: 
+      - !Vector3 {x: 34, y: 0, z: 27}
+      rotations: [155]
+      sizes: 
+      - !Vector3 {x: 9, y: 2, z: 12}
+      colors: 
+      - !RGB {r: 58, g: 133, b: 110}
+    - !Item
+      name: Ramp
+      positions: 
+      - !Vector3 {x: 32, y: 0, z: 25}
+      rotations: [208]
+      sizes: 
+      - !Vector3 {x: 1, y: 11, z: 4}
+      colors: 
+      - !RGB {r: 84, g: 197, b: 21}

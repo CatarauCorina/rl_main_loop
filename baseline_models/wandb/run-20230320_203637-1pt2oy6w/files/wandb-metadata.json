@@ -1,0 +1,18 @@
+{
+    "os": "Windows-10-10.0.19041-SP0",
+    "python": "3.8.5",
+    "heartbeatAt": "2023-03-20T18:36:40.879328",
+    "startedAt": "2023-03-20T18:36:37.449074",
+    "docker": null,
+    "gpu": "Quadro RTX 4000",
+    "gpu_count": 1,
+    "cpu_count": 12,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "C:/Users/WorkStation/Documents/animal-ai-main/animal-ai-main/baseline_models/trainer.py",
+    "codePath": "trainer.py",
+    "host": "DESKTOP-J4CJTUB",
+    "username": "WorkStation",
+    "executable": "C:\\Users\\WorkStation\\Envs\\animalai\\Scripts\\python.exe"
+}
