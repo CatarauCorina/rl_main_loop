@@ -11,10 +11,15 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import torchvision.transforms as T
-
-from baseline_models.logger import Logger
-from baseline_models.conv_dqn import DQN
-from baseline_models.animalai_loader import AnimalAIEnvironmentLoader
+IS_SERVER = True
+if not IS_SERVER:
+    from baseline_models.logger import Logger
+    from baseline_models.conv_dqn import DQN
+    from baseline_models.animalai_loader import AnimalAIEnvironmentLoader
+else:
+    from logger import Logger
+    from conv_dqn import DQN
+    from animalai_loader import AnimalAIEnvironmentLoader
 
 
 envs_to_run = []
