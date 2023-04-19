@@ -6,7 +6,7 @@ chmod +x /content/drive/MyDrive/rl_main_loop/rl_main_loop/bin/pip
 chmod +x /content/drive/MyDrive/rl_main_loop/rl_main_loop/bin/python
 source /content/drive/MyDrive/rl_main_loop/rl_main_loop/bin/activate || virtualenv rl_main_loop --python=python3.8
 sudo apt-get install sox ffmpeg libcairo2 libcairo2-dev
-pip install -r req_colab_req.txt
+pip install -r colab_new.txt
 pip -V
 python --version
 pip install seaborn
