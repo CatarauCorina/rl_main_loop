@@ -5,6 +5,7 @@ pip install virtualenv
 chmod +x /content/drive/MyDrive/rl_main_loop/rl_main_loop/bin/pip
 chmod +x /content/drive/MyDrive/rl_main_loop/rl_main_loop/bin/python
 source /content/drive/MyDrive/rl_main_loop/rl_main_loop/bin/activate || virtualenv rl_main_loop --python=python3.8
+cat requirements_main_lopp.txt
 pip install -r requirements_main_lopp.txt
 pip -V;
 python --version
