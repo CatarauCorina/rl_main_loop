@@ -169,7 +169,6 @@ torchvision==0.15.1
 tornado==6.2
 tqdm==4.64.0
 traitlets==5.3.0
-typing_extensions==4.3.0
 urllib3==1.25.11
 wandb==0.12.21
 wcwidth==0.2.5
