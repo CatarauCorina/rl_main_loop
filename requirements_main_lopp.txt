@@ -1,8 +1,7 @@
 absl-py==0.12.0
 aiohttp==3.8.1
 aiosignal==1.2.0
-# Editable install with no version control (animalai==3.0.0)
--e c:\users\workstation\documents\animal-ai-main\animal-ai-main\animalai
+animalai==3.0.0
 argon2-cffi==21.3.0
 argon2-cffi-bindings==21.2.0
 asttokens==2.0.5
