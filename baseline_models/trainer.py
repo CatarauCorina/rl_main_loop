@@ -1,4 +1,5 @@
 import random
+import wandb
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -9,9 +10,10 @@ from PIL import Image
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torchvision.utils import make_grid
 import torch.nn.functional as F
 import torchvision.transforms as T
-IS_SERVER = True
+IS_SERVER = False
 if not IS_SERVER:
     from baseline_models.logger import Logger
     from baseline_models.conv_dqn import DQN
@@ -30,6 +32,7 @@ Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward'
 
 
 class TrainModel(object):
+    ACTIONS_TO_USE = [1, 2, 3, 6]
 
     def __init__(self, model, env, memory=(True, 1000), writer=None, params={}):
         self.model_to_train = model
@@ -39,7 +42,7 @@ class TrainModel(object):
         self.writer = writer
         self.params = params
 
-    def run_train(self, target_net, policy_net, memory, params, optimizer, writer):
+    def run_train(self, target_net, policy_net, memory, params, optimizer, writer, max_timesteps=1000):
         episode_durations = []
         num_episodes = 10000
         steps_done = 0
@@ -51,17 +54,25 @@ class TrainModel(object):
             state = current_screen - last_screen
             rew_ep = 0
             loss_ep = 0
+            timestep = 0
+            episode_frames = []
             for t in count():
                 # Select and perform an action
+                timestep += 1
                 action, steps_done = self.select_action(state, params, policy_net, self.env.action_space.n, steps_done)
 
-                _, reward, done, _ = self.env.step(action.item())
+                returned_state, reward, done, _ = self.env.step(action.item())
+                self.writer.log({"Action taken": action.item()})
+                if str(reward) == "-0.0023999999":
+                    reward = 0
+
                 reward = torch.tensor([reward], device=device)
 
                 rew_ep += reward.item()
                 # Observe new state
                 last_screen = current_screen
                 current_screen = self.process_frames()
+                episode_frames.append(wandb.Image(returned_state))
                 if not done:
                     next_state = current_screen
                 else:
@@ -76,26 +87,33 @@ class TrainModel(object):
                 # Perform one step of the optimization (on the target network)
                 loss_ep = self.optimize_model(policy_net, target_net, params, memory, optimizer, loss_ep, writer)
 
-                if done:
+                if done or t == max_timesteps:
                     episode_durations.append(t + 1)
-                    writer.log({"Reward episode": rew_ep, "Episode duration": t + 1, "Train loss": loss_ep / (t + 1)})
+                    self.writer.log({"Reward episode": rew_ep, "Episode duration": t + 1, "Train loss": loss_ep / (t + 1)})
                     print(loss_ep / (t + 1))
+                    # episode_frames_wandb = make_grid(episode_frames)
+                    # images = wandb.Image(episode_frames_wandb, caption=f'Episode {i_episode} states')
+                    self.writer.log({'states': episode_frames})
+
                     break
             # Update the target network, copying all weights and biases in DQN
             if i_episode % params['target_update'] == 0:
                 target_net.load_state_dict(policy_net.state_dict())
-            if i_episode % 1000 == 0:
+            if i_episode % 1000 == 0 and i_episode != 0:
                 self.evaluate(target_net, writer, i_episode)
         return
 
-    def init_model(self):
+    def init_model(self, actions=4):
         init_screen = self.process_frames()
         self.env.reset()
         _, _, screen_height, screen_width = init_screen.shape
-        n_actions = self.env.action_space.n
+        if actions == 0:
+            n_actions = self.env.action_space.n
+        else:
+            n_actions = actions
 
-        policy_net = self.model_to_train(screen_height, screen_width, n_actions).to(device)
-        target_net = self.model_to_train(screen_height, screen_width, n_actions).to(device)
+        policy_net = self.model_to_train(init_screen.squeeze(0).shape, n_actions).to(device)
+        target_net = self.model_to_train(init_screen.squeeze(0).shape, n_actions).to(device)
         target_net.load_state_dict(policy_net.state_dict())
         target_net.eval()
 
@@ -108,8 +126,7 @@ class TrainModel(object):
     def process_frames(self):
 
         resize = T.Compose([T.ToPILImage(),
-                            T.Resize(64, interpolation=Image.CUBIC),
-                            T.Grayscale(),
+                            T.Resize(128, interpolation=Image.CUBIC),
                             T.ToTensor()])
         obs = self.env.reset()
         screen = obs.transpose((2, 0, 1))
@@ -118,7 +135,6 @@ class TrainModel(object):
         return resize(screen).unsqueeze(0).to(device)
 
     def select_action(self, state, params, policy_net, n_actions, steps_done):
-
         sample = random.random()
         eps_threshold = 0.8
         # eps_threshold = params['eps_end'] + (params['eps_start'] - params['eps_end']) * \
@@ -130,9 +146,9 @@ class TrainModel(object):
                 # second column on max result is index of where max element was
                 # found, so we pick action with the larger expected reward.
                 #Exploiting
-                return policy_net(state).max(1)[1].view(1, 1), steps_done
+                return torch.tensor([[self.ACTIONS_TO_USE[policy_net(state).max(1)[1].view(1, 1)]]], device=device, dtype=torch.long), steps_done
         else:
-            return torch.tensor([[random.randrange(n_actions)]], device=device, dtype=torch.long), steps_done
+            return torch.tensor([[random.choice(self.ACTIONS_TO_USE)]], device=device, dtype=torch.long), steps_done
 
     def optimize_model(self, policy_net, target_net, params, memory, optimizer, loss_ep, writer):
         if len(memory) < params['batch_size']:
@@ -156,7 +172,10 @@ class TrainModel(object):
         # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
         # columns of actions taken. These are the actions which would've been taken
         # for each batch state according to policy_net
-        state_action_values = policy_net(state_batch).gather(1, action_batch)
+        # Map action batch to 4 actions
+        action_batch_new = torch.tensor([self.ACTIONS_TO_USE.index(a.item()) for a in action_batch], dtype=torch.int64, device=device)
+        action_batch_new = action_batch_new.view(action_batch_new.shape[0], 1)
+        state_action_values = policy_net(state_batch).gather(1, action_batch_new)
 
         # Compute V(s_{t+1}) for all next states.
         # Expected values of actions for non_final_next_states are computed based
@@ -171,7 +190,8 @@ class TrainModel(object):
         expected_state_action_values = (next_state_values * params['gamma']) + reward_batch
 
         # Compute Huber loss
-        loss = F.smooth_l1_loss(state_action_values, expected_state_action_values.unsqueeze(1))
+        #loss = F.smooth_l1_loss(state_action_values, expected_state_action_values.unsqueeze(1))
+        loss = nn.MSELoss()(state_action_values, expected_state_action_values.unsqueeze(1))
         loss_ep = loss_ep + loss.item()
 
         # Optimize the model
@@ -182,7 +202,7 @@ class TrainModel(object):
         optimizer.step()
         return loss_ep
 
-    def evaluate(self, target_net, writer, i_episode):
+    def evaluate(self, target_net, writer, i_episode, max_timesteps=1000):
         with torch.no_grad():
             # Initialize the environment and state
             self.env.reset()
@@ -191,12 +211,12 @@ class TrainModel(object):
             state = current_screen - last_screen
             rew_ep = 0
             for t in count():
-                action = target_net(state).max(1)[1].view(1, 1)
-                _, reward, done, _, _ = self.env.step(action.item())
+                action = self.ACTIONS_TO_USE[target_net(state).max(1)[1].view(1, 1)]
+                _, reward, done, _ = self.env.step(action)
                 reward = torch.tensor([reward], device=device)
                 rew_ep += reward.item()
                 state = self.process_frames() - state
-                if done:
+                if done or t==max_timesteps:
                     writer.add_scalar('Reward ep test', rew_ep, i_episode)
                     writer.log({"Reward episode test": rew_ep})
                     break
@@ -234,18 +254,19 @@ def process_frames_a(state):
 
 def main():
     params = {
-        'batch_size': 128,
-        'gamma': 0.999,
+        'batch_size': 64,
+        'gamma': 0.99,
         'eps_start': 0.9,
-        'eps_end':0.05,
-        'eps_decay': 200,
-        'target_update': 100
+        'eps_end':0.02,
+        'eps_decay': .999985,
+        'target_update': 1000
     }
 
-    env_loader = AnimalAIEnvironmentLoader()
+
+    env_loader = AnimalAIEnvironmentLoader(random_config=False, config_file_name="config_multiple_209.yml")
     env = env_loader.get_animalai_env()
 
-    wandb_logger = Logger("animal_ai_convdqn_baseline_colab", project='rl_loop')
+    wandb_logger = Logger("mse_animal_ai_convdqn_baseline_limited_actions_pos", project='rl_loop')
     logger = wandb_logger.get_logger()
     trainer = TrainModel(DQN,
                          env, (True, 1000),

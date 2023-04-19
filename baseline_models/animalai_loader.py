@@ -12,7 +12,8 @@ class AnimalAIEnvironmentLoader:
 
     def __init__(self, config_file=None, random_config=True, config_file_name=''):
         if config_file is not None:
-            self.config_file = config_file
+            self.config_folder = "../generated_envs/"
+            self.config_file = (self.config_folder + config_file_name)
         else:
             self.config_folder = "../generated_envs/"
             config_files = os.listdir(self.config_folder)
