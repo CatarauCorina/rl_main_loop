@@ -107,7 +107,6 @@ pyparsing==3.0.9
 pyrsistent==0.18.1
 python-abc==0.1.0
 python-dateutil==2.8.2
-pytorch-lightning==1.7.7
 pytz==2022.6
 PyYAML==6.0
 pyzmq==23.2.0
