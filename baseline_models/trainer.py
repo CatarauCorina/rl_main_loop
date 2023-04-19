@@ -13,7 +13,7 @@ import torch.optim as optim
 from torchvision.utils import make_grid
 import torch.nn.functional as F
 import torchvision.transforms as T
-IS_SERVER = False
+IS_SERVER = True
 if not IS_SERVER:
     from baseline_models.logger import Logger
     from baseline_models.conv_dqn import DQN
@@ -266,7 +266,7 @@ def main():
     env_loader = AnimalAIEnvironmentLoader(random_config=False, config_file_name="config_multiple_209.yml")
     env = env_loader.get_animalai_env()
 
-    wandb_logger = Logger("mse_animal_ai_convdqn_baseline_limited_actions_pos", project='rl_loop')
+    wandb_logger = Logger("1mse_animal_ai_convdqn_baseline_limited_actions_pos", project='rl_loop')
     logger = wandb_logger.get_logger()
     trainer = TrainModel(DQN,
                          env, (True, 1000),
