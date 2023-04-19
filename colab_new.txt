@@ -112,7 +112,6 @@ google-cloud-firestore==2.11.0
 google-cloud-language==2.9.1
 google-cloud-storage==2.8.0
 google-cloud-translate==3.11.1
-google-colab @ file:///colabtools/dist/google-colab-1.0.0.tar.gz
 google-crc32c==1.5.0
 google-pasta==0.2.0
 google-resumable-media==2.4.1
@@ -157,7 +156,6 @@ ipython-sql==0.4.1
 ipywidgets==7.7.1
 itsdangerous==2.1.2
 jax==0.4.8
-jaxlib @ https://storage.googleapis.com/jax-releases/cuda11/jaxlib-0.4.7+cuda11.cudnn86-cp39-cp39-manylinux2014_x86_64.whl
 jieba==0.42.1
 Jinja2==3.1.2
 joblib==1.2.0
