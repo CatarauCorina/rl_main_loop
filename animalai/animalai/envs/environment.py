@@ -83,7 +83,7 @@ class AnimalAIEnvironment(UnityEnvironment):
         # self.targetFrameRate = targetFrameRate
 
         self.configure_side_channels(self.side_channels)
-
+        print(file_name)
         super().__init__(
             file_name=file_name,
             worker_id=worker_id,
