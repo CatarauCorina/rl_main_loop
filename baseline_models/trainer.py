@@ -263,7 +263,7 @@ def main():
     }
 
 
-    env_loader = AnimalAIEnvironmentLoader(random_config=False, config_file_name="config_multiple_209.yml")
+    env_loader = AnimalAIEnvironmentLoader(random_config=False, config_file_name="config_multiple_209.yml", is_server=IS_SERVER)
     env = env_loader.get_animalai_env()
 
     wandb_logger = Logger("1mse_animal_ai_convdqn_baseline_limited_actions_pos", project='rl_loop')

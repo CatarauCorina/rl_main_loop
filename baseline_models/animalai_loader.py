@@ -10,12 +10,18 @@ from animalai.envs.environment import AnimalAIEnvironment
 
 class AnimalAIEnvironmentLoader:
 
-    def __init__(self, config_file=None, random_config=True, config_file_name=''):
-        if config_file is not None:
-            self.config_folder = "../generated_envs/"
+    def __init__(self, random_config=True, config_file_name='', is_server=False):
+        if config_file_name is not None:
+            if is_server:
+                self.config_folder = "generated_envs/"
+            else:
+                self.config_folder = "../generated_envs/"
             self.config_file = (self.config_folder + config_file_name)
         else:
-            self.config_folder = "../generated_envs/"
+            if is_server:
+                self.config_folder = "generated_envs/"
+            else:
+                self.config_folder = "../generated_envs/"
             config_files = os.listdir(self.config_folder)
             if random_config:
                 config_random = random.randint(0, len(config_files))
