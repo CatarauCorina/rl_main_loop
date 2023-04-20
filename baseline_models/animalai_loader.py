@@ -11,6 +11,7 @@ from animalai.envs.environment import AnimalAIEnvironment
 class AnimalAIEnvironmentLoader:
 
     def __init__(self, random_config=True, config_file_name='', is_server=False):
+        self.is_server = is_server
         if config_file_name is not None:
             if is_server:
                 self.config_folder = "generated_envs/"
@@ -32,9 +33,13 @@ class AnimalAIEnvironmentLoader:
                 self.config_file = (self.config_folder + config_file_name)
 
     def get_animalai_env(self):
+        if self.is_server:
+            file_name = 'env/AnimalAI'
+        else:
+            file_name = '../env/AnimalAI'
         aai_env = AnimalAIEnvironment(
             seed=123,
-            file_name="../env/AnimalAI",
+            file_name=file_name,
             arenas_configurations=self.config_file,
             play=False,
             base_port=5000,
