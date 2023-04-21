@@ -136,7 +136,7 @@ terminado==0.15.0
 threadpoolctl==2.1.0
 tinycss2==1.1.1
 cmake==3.26.3
-dbus-python==1.2.16
+dbus-next==0.2.3
 filelock==3.12.0
 Jinja2==3.1.2
 lit==16.0.1
@@ -154,7 +154,7 @@ nvidia-cusolver-cu11==11.4.0.1
 nvidia-cusparse-cu11==11.7.4.91
 nvidia-nccl-cu11==2.14.3
 nvidia-nvtx-cu11==11.7.91
-PyGObject==3.36.0
+PyGObject==3.44.1
 requests-unixsocket==0.2.0
 sympy==1.11.1
 triton==2.0.0
