@@ -1,3 +1,4 @@
 baseline_models/wandb/*
 *.pyc
 *.ini
+.idea/*
