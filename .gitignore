@@ -1,4 +1,7 @@
 baseline_models/wandb/*
+env/desktop.ini
+animalai/desktop.ini
+whls/desktop.ini
 *.pyc
 *.ini
 .idea/*
