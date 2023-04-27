@@ -29,6 +29,7 @@ class AnimalAIEnvironmentLoader:
                 self.config_file = (
                         self.config_folder + config_files[config_random]
                 )
+                print(self.config_file)
             else:
                 self.config_file = (self.config_folder + config_file_name)
 

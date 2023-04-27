@@ -3,8 +3,11 @@ from baseline_models.animalai_loader import AnimalAIEnvironmentLoader
 
 
 def load_env():
-    animal_ai_loader = AnimalAIEnvironmentLoader()
-    env = animal_ai_loader.get_animalai_env()
+    env_loader = AnimalAIEnvironmentLoader(
+        random_config=False,
+        config_file_name="config_multiple_209.yml",
+        is_server=False)
+    env = env_loader.get_animalai_env()
     obs = env.reset()
     return obs, env
 

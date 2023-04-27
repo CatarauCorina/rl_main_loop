@@ -42,7 +42,7 @@ class TrainModel(object):
         self.writer = writer
         self.params = params
 
-    def run_train(self, target_net, policy_net, memory, params, optimizer, writer, max_timesteps=10000):
+    def run_train(self, target_net, policy_net, memory, params, optimizer, writer, max_timesteps=1000):
         episode_durations = []
         num_episodes = 10000
         steps_done = 0
@@ -60,7 +60,11 @@ class TrainModel(object):
                 timestep += 1
                 action, steps_done = self.select_action(state, params, policy_net, self.env.action_space.n, steps_done)
 
-                returned_state, reward, done, _ = self.env.step(action.item())
+                returned_state, reward, done, _ = self.env.step(3)
+                print(f'action:{action.item()}, reward:{reward}')
+                if t % 10 == 0:
+                    plt.imshow(returned_state)
+                    plt.show()
                 self.writer.log({"Action taken": action.item()})
                 reward = torch.tensor([reward], device=device)
 
@@ -68,8 +72,7 @@ class TrainModel(object):
                 # Observe new state
                 last_screen = current_screen
                 current_screen = self.process_frames(returned_state)
-                # if t % 2000:
-                #     episode_frames.append(wandb.Image(returned_state))
+                episode_frames.append(wandb.Image(returned_state))
                 if not done:
                     next_state = current_screen
                 else:
@@ -85,13 +88,12 @@ class TrainModel(object):
                 loss_ep = self.optimize_model(policy_net, target_net, params, memory, optimizer, loss_ep, writer)
 
                 if done or t == max_timesteps:
-                    print(t)
                     episode_durations.append(t + 1)
                     self.writer.log({"Reward episode": rew_ep, "Episode duration": t + 1, "Train loss": loss_ep / (t + 1)})
                     print(loss_ep / (t + 1))
                     # episode_frames_wandb = make_grid(episode_frames)
                     # images = wandb.Image(episode_frames_wandb, caption=f'Episode {i_episode} states')
-                    #self.writer.log({'states': episode_frames})
+                    self.writer.log({'states': episode_frames})
 
                     break
             # Update the target network, copying all weights and biases in DQN
@@ -264,7 +266,7 @@ def main():
         is_server=IS_SERVER)
     env = env_loader.get_animalai_env()
 
-    wandb_logger = Logger("baseline_dqn", project='rl_loop')
+    wandb_logger = Logger("viewactions", project='rl_loop')
     logger = wandb_logger.get_logger()
     trainer = TrainModel(DQN,
                          env, (True, 1000),
