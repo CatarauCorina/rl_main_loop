@@ -5,12 +5,13 @@ import random
 import os
 import matplotlib.pyplot as plt
 from gym_unity.envs import UnityToGymWrapper
-IS_SERVER= True
+IS_SERVER=True
 
 if not IS_SERVER:
     from animalai.envs.environment import AnimalAIEnvironment
 else:
-    from animalai_loader import AnimalAIEnvironmentLoader
+    import animalai as animai
+
 
 
 class AnimalAIEnvironmentLoader:
@@ -43,18 +44,33 @@ class AnimalAIEnvironmentLoader:
             file_name = 'env/AnimalAI'
         else:
             file_name = '../env/AnimalAI'
-        aai_env = AnimalAIEnvironment(
-            seed=123,
-            file_name=file_name,
-            arenas_configurations=self.config_file,
-            play=False,
-            base_port=5000,
-            inference=False,
-            useCamera=True,
-            resolution=256,
-            useRayCasts=False,
-            # raysPerSide=1,
-            # rayMaxDegrees = 30,
-        )
+        if IS_SERVER:
+            aai_env = animai.envs.AnimalAIEnvironment(
+                seed=123,
+                file_name=file_name,
+                arenas_configurations=self.config_file,
+                play=False,
+                base_port=5000,
+                inference=False,
+                useCamera=True,
+                resolution=256,
+                useRayCasts=False,
+                # raysPerSide=1,
+                # rayMaxDegrees = 30,
+            )
+        else:
+            aai_env = AnimalAIEnvironment(
+                seed=123,
+                file_name=file_name,
+                arenas_configurations=self.config_file,
+                play=False,
+                base_port=5000,
+                inference=False,
+                useCamera=True,
+                resolution=256,
+                useRayCasts=False,
+                # raysPerSide=1,
+                # rayMaxDegrees = 30,
+            )
         env = UnityToGymWrapper(aai_env, uint8_visual=True, allow_multiple_obs=False, flatten_branched=True)
         return env
