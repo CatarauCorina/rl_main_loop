@@ -15,7 +15,7 @@ import torch.nn.functional as F
 import torchvision.transforms as T
 from torch.autograd import Variable
 
-IS_SERVER = True
+IS_SERVER = False
 from baseline_models.logger import Logger
 from baseline_models.conv_dqn import DQN
 from baseline_models.animalai_loader import AnimalAIEnvironmentLoader

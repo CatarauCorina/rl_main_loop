@@ -75,7 +75,7 @@ class AnimalAIEnvironment(UnityEnvironment):
             decisionPeriod)
         self.play = play
         self.inference = inference
-        self.timeout = 10 if play else 60
+        self.timeout = 100 if play else 600
         self.side_channels = side_channels if side_channels else []
         self.arenas_parameters_side_channel = None
         self.use_YAML = use_YAML
