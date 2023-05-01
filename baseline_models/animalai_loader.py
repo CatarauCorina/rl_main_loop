@@ -36,7 +36,7 @@ class AnimalAIEnvironmentLoader:
 
     def get_animalai_env(self):
         if self.is_server:
-            file_name = '../env_linux/AnimalAI'
+            file_name = '../env_linux/AnimalAI.x86_64'
         else:
             file_name = '../env/AnimalAI'
         aai_env = AnimalAIEnvironment(
