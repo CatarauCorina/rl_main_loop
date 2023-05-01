@@ -154,6 +154,14 @@ class TrainModel(object):
                         {"Loss/episode": loss/(t+1), "Episode": i_episode})
 
                     break
+            if i_episode % 3000 == 0 and i_episode != 0:
+                PATH = f"model_{i_episode}.ckp"
+
+                torch.save({
+                    'episode': i_episode,
+                    'model_state_dict': policy_net.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                }, PATH)
 
         return
 
