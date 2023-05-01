@@ -6,3 +6,4 @@ whls/desktop.ini
 *.pyc
 *.ini
 .idea/*
+*.cpython-38.pyc
