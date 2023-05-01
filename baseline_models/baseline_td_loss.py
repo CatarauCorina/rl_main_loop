@@ -15,7 +15,7 @@ import torch.nn.functional as F
 import torchvision.transforms as T
 from torch.autograd import Variable
 
-IS_SERVER = True
+IS_SERVER = False
 if not IS_SERVER:
     from baseline_models.logger import Logger
     from baseline_models.conv_dqn import DQN

@@ -1,2 +1,2 @@
-import animalai
+import animalai_env
 import baseline_models
