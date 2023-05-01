@@ -15,7 +15,7 @@ import torch.nn.functional as F
 import torchvision.transforms as T
 from torch.autograd import Variable
 
-IS_SERVER = False
+IS_SERVER = True
 if not IS_SERVER:
     from baseline_models.logger import Logger
     from baseline_models.conv_dqn import DQN
@@ -380,7 +380,7 @@ def main():
         is_server=IS_SERVER)
     env = env_loader.get_animalai_env()
 
-    wandb_logger = Logger("baseline_dqn_no_target", project='test')
+    wandb_logger = Logger("baseline_dqn_no_target", project='rl_loop')
     logger = wandb_logger.get_logger()
     trainer = TrainModel(DQN,
                          env, (True, 1000),

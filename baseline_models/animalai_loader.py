@@ -5,7 +5,7 @@ import random
 import os
 import matplotlib.pyplot as plt
 from gym_unity.envs import UnityToGymWrapper
-IS_SERVER=False
+IS_SERVER=True
 
 from animalai.animalai.envs.environment import AnimalAIEnvironment
 
