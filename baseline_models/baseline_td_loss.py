@@ -380,7 +380,7 @@ def main():
         is_server=IS_SERVER)
     env = env_loader.get_animalai_env()
 
-    wandb_logger = Logger("baseline_dqn_no_target", project='rl_loop')
+    wandb_logger = Logger("baseline_dqn_no_target", project='test')
     logger = wandb_logger.get_logger()
     trainer = TrainModel(DQN,
                          env, (True, 1000),

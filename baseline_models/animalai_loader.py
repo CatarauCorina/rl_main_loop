@@ -5,13 +5,9 @@ import random
 import os
 import matplotlib.pyplot as plt
 from gym_unity.envs import UnityToGymWrapper
-IS_SERVER=True
+IS_SERVER=False
 
-if not IS_SERVER:
-    from animalai.envs.environment import AnimalAIEnvironment
-else:
-    import animalai as animai
-
+from animalai.animalai.envs.environment import AnimalAIEnvironment
 
 
 class AnimalAIEnvironmentLoader:
