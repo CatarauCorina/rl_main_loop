@@ -16,15 +16,9 @@ import torchvision.transforms as T
 from torch.autograd import Variable
 
 IS_SERVER = True
-if not IS_SERVER:
-    from baseline_models.logger import Logger
-    from baseline_models.conv_dqn import DQN
-    from baseline_models.animalai_loader import AnimalAIEnvironmentLoader
-else:
-    from logger import Logger
-    from conv_dqn import DQN
-    from animalai_loader import AnimalAIEnvironmentLoader
-
+from baseline_models.logger import Logger
+from baseline_models.conv_dqn import DQN
+from baseline_models.animalai_loader import AnimalAIEnvironmentLoader
 
 envs_to_run = []
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
