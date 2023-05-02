@@ -100,9 +100,9 @@ class TrainModel(object):
                 self.evaluate(target_net, writer, i_episode)
         return
 
-    def train(self, target_net, policy_net, memory, params, optimizer, writer, max_timesteps=10000):
+    def train(self, target_net, policy_net, memory, params, optimizer, writer, max_timesteps=5000):
         episode_durations = []
-        num_episodes = 10000
+        num_episodes = 3000
         steps_done = 0
         counter = 0
         for i_episode in range(num_episodes):
@@ -154,7 +154,7 @@ class TrainModel(object):
                         {"Loss/episode": loss/(t+1), "Episode": i_episode})
 
                     break
-            if i_episode % 3000 == 0 and i_episode != 0:
+            if i_episode % 1000 == 0 and i_episode != 0:
                 PATH = f"model_{i_episode}.ckp"
 
                 torch.save({
