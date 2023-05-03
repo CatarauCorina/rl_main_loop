@@ -11,7 +11,7 @@ import torch.optim as optim
 import torchvision.transforms as T
 from torch.autograd import Variable
 
-IS_SERVER = True
+IS_SERVER = False
 from baseline_models.logger import Logger
 from segment_anything_objects.dqn_sam import DQN
 from baseline_models.animalai_loader import AnimalAIEnvironmentLoader

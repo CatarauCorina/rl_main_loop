@@ -35,7 +35,7 @@ class SegmentAnythingObjectExtractor(object):
 
     def extract_objects(self, frame):
         objects = []
-        frame_reduced = self.pil_transform(frame).permute(1, 2, 0).detach().numpy()
+        #frame_reduced = self.pil_transform(frame).permute(1, 2, 0).detach().numpy()
         masks = self.mask_generator.generate(frame)
         masks = masks[:self.no_objects]
         for mask in masks:
