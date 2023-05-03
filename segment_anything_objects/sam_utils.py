@@ -4,6 +4,7 @@ import torchvision.transforms as transforms
 from segment_anything import SamAutomaticMaskGenerator, sam_model_registry, SamPredictor
 import numpy as np, cv2
 import torch
+from PIL import Image
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -13,7 +14,7 @@ class SegmentAnythingObjectExtractor(object):
     def __init__(self, checkpoint="sam_vit_b_01ec64.pth", model_type="vit_b", no_objects=8):
         self.checkpoint_path = "checkpoints"
         self.checkpoint_file = f'{self.checkpoint_path}/{checkpoint}'
-        self.sam_model = sam_model_registry[model_type](checkpoint=self.checkpoint_file).to(device)
+        self.sam_model = sam_model_registry[model_type](checkpoint=self.checkpoint_file).to(device).eval()
         self.sam_encoder = SamPredictor(self.sam_model)
         self.no_objects = no_objects
         self.mask_generator = SamAutomaticMaskGenerator(
@@ -26,11 +27,16 @@ class SegmentAnythingObjectExtractor(object):
             min_mask_region_area=100,  # Requires open-cv to run post-processin
         )
         self.transform = transforms.ToTensor()
-        self.pil_transform = transforms.ToPILImage()
-        self.encoder = models.vgg16(pretrained=True).to(device)
+        self.pil_transform = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.Resize(64, interpolation=Image.CUBIC),
+            transforms.ToTensor()])
+        self.encoder = models.vgg16(pretrained=True).to(device).eval()
 
     def extract_objects(self, frame):
         objects = []
+        frame_reduced = self.pil_transform(frame).permute(1, 2, 0).detach().numpy()
+        print(frame_reduced.shape)
         masks = self.mask_generator.generate(frame)
         masks = masks[:self.no_objects]
         for mask in masks:
@@ -41,6 +47,7 @@ class SegmentAnythingObjectExtractor(object):
             objects.append(tensor)
         obj_tensor = torch.stack(objects).to(device)
         encoded_objs = self.encoder(obj_tensor)
+        encoded_objs = encoded_objs.detach()
         return encoded_objs.unsqueeze(0).unsqueeze(0).to(device)
 
 

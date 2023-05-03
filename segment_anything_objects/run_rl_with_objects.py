@@ -82,6 +82,7 @@ class TrainModel(object):
 
                 if done or t == max_timesteps:
                     episode_durations.append(t + 1)
+                    print(f'---End of episode-- {i_episode}')
                     self.writer.log(
                         {"Reward/episode": rew_ep, "Episode": i_episode})
                     print(rew_ep)
@@ -309,7 +310,7 @@ def process_frames_a(state):
 
 def main():
     params = {
-        'batch_size': 32,
+        'batch_size': 10,
         'gamma': 0.99,
         'eps_start': 0.9,
         'eps_end':0.02,
