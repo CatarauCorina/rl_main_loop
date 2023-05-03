@@ -7,3 +7,5 @@ whls/desktop.ini
 *.ini
 .idea/*
 *.cpython-38.pyc
+*.pth
+segment_anything_objects/wandb/*
