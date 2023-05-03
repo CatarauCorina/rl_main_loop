@@ -29,15 +29,14 @@ class SegmentAnythingObjectExtractor(object):
         self.transform = transforms.ToTensor()
         self.pil_transform = transforms.Compose([
             transforms.ToPILImage(),
-            transforms.Resize(64, interpolation=Image.CUBIC),
+            transforms.Resize(128, interpolation=Image.CUBIC),
             transforms.ToTensor()])
         self.encoder = models.vgg16(pretrained=True).to(device).eval()
 
     def extract_objects(self, frame):
         objects = []
         frame_reduced = self.pil_transform(frame).permute(1, 2, 0).detach().numpy()
-        print(frame_reduced.shape)
-        masks = self.mask_generator.generate(frame)
+        masks = self.mask_generator.generate(frame_reduced)
         masks = masks[:self.no_objects]
         for mask in masks:
             mask_inverted = np.invert(mask['segmentation']).astype(int)
