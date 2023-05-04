@@ -373,8 +373,9 @@ def process_frames_a(state):
 
 def main():
     args = sys.argv[1:]
+    print(args)
     checkpoint_file = ""
-    if len(args) == 2 and args[0] == '-checkpoint':
+    if args[0] == '-checkpoint':
         checkpoint_file = args[1]
     params = {
         'batch_size': 32,
