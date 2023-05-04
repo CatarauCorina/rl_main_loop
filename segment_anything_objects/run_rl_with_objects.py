@@ -1,5 +1,6 @@
 import random
 import wandb
+import sys
 import numpy as np
 from collections import namedtuple
 from itertools import count
@@ -11,7 +12,7 @@ import torch.optim as optim
 import torchvision.transforms as T
 from torch.autograd import Variable
 
-IS_SERVER = False
+IS_SERVER = True
 from baseline_models.logger import Logger
 from segment_anything_objects.dqn_sam import DQN
 from baseline_models.animalai_loader import AnimalAIEnvironmentLoader
@@ -107,8 +108,8 @@ class TrainModel(object):
     def compute_td_loss(self, model, replay_buffer, params, optimizer, batch_size=32):
 
         state, action, reward, next_state, done, non_final_mask = replay_buffer.sample_td(batch_size)
-        state = self.object_extractor.extract_objects(state)
-        next_state = self.object_extractor.extract_objects(next_state)
+        # state = self.object_extractor.extract_objects(state)
+        # next_state = self.object_extractor.extract_objects(next_state)
 
         state = state.to(device)
         next_state = next_state.to(device)
@@ -142,7 +143,7 @@ class TrainModel(object):
 
         return loss
 
-    def init_model(self, actions=4):
+    def init_model(self, actions=4, checkpoint_file=""):
         obs = self.env.reset()
         init_screen = self.object_extractor.extract_objects(obs)
         # init_screen = self.process_frames(obs)
@@ -153,12 +154,17 @@ class TrainModel(object):
             n_actions = actions
         #objects_in_init_screen = self.object_extractor.extract_objects(init_screen.squeeze(0))
         policy_net = self.model_to_train(init_screen.shape, n_actions).to(device)
+        optimizer = optim.RMSprop(policy_net.parameters())
+        optimizer = optim.Adam(policy_net.parameters(), lr=0.00001)
+        if checkpoint_file != "":
+            print(f"Trainning from checkpoint {checkpoint_file}")
+            checkpoint = torch.load(checkpoint_file)
+            policy_net.load_state_dict(checkpoint['model_state_dict'])
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         target_net = self.model_to_train(init_screen.shape, n_actions).to(device)
         target_net.load_state_dict(policy_net.state_dict())
         target_net.eval()
 
-        optimizer = optim.RMSprop(policy_net.parameters())
-        optimizer = optim.Adam(policy_net.parameters(), lr=0.00001)
         if self.use_memory[0] is not None:
             self.memory = ReplayMemory(self.use_memory[1])
             self.train(target_net, policy_net, self.memory, self.params, optimizer, self.writer)
@@ -309,6 +315,10 @@ def process_frames_a(state):
 
 
 def main():
+    args = sys.argv[1:]
+    checkpoint_file = ""
+    if len(args) == 2 and args[0] == '-checkpoint':
+        checkpoint_file = args[1]
     params = {
         'batch_size': 10,
         'gamma': 0.99,
@@ -324,12 +334,12 @@ def main():
         is_server=IS_SERVER)
     env = env_loader.get_animalai_env()
 
-    wandb_logger = Logger("samobjects_dqn_no_target", project='rl_loop')
+    wandb_logger = Logger(f"{checkpoint_file}samobjects_dqn_no_target", project='rl_loop')
     logger = wandb_logger.get_logger()
     trainer = TrainModel(DQN,
                          env, (True, 1000),
                          logger, params)
-    trainer.init_model()
+    trainer.init_model(checkpoint_file=checkpoint_file)
 
 
     return

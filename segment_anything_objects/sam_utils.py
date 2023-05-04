@@ -4,7 +4,9 @@ import torchvision.transforms as transforms
 from segment_anything import SamAutomaticMaskGenerator, sam_model_registry, SamPredictor
 import numpy as np, cv2
 import torch
+import scipy
 from PIL import Image
+import torch.nn.functional as F
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -31,22 +33,28 @@ class SegmentAnythingObjectExtractor(object):
             transforms.ToPILImage(),
             transforms.Resize(128, interpolation=Image.CUBIC),
             transforms.ToTensor()])
+        self.im_height = 128
+        self.im_width = 128
         self.encoder = models.vgg16(pretrained=True).to(device).eval()
 
     def extract_objects(self, frame):
         objects = []
         #frame_reduced = self.pil_transform(frame).permute(1, 2, 0).detach().numpy()
-        masks = self.mask_generator.generate(frame)
+        frame_reduced = cv2.resize(frame, dsize=(self.im_height, self.im_width), interpolation=cv2.INTER_CUBIC)
+        masks = self.mask_generator.generate(frame_reduced)
         masks = masks[:self.no_objects]
         for mask in masks:
             mask_inverted = np.invert(mask['segmentation']).astype(int)
             mask_arr = np.stack((mask_inverted,) * 3, axis=-1)
-            masked = np.where(mask_arr == 0, frame, 0)
+            masked = np.where(mask_arr == 0, frame_reduced, 0)
             tensor = self.transform(masked).float()
             objects.append(tensor)
         obj_tensor = torch.stack(objects).to(device)
         encoded_objs = self.encoder(obj_tensor)
         encoded_objs = encoded_objs.detach()
+        if len(masks) < self.no_objects:
+            encoded_objs = F.pad(input=encoded_objs, pad=(0, 0, self.no_objects-len(masks), 0), mode='constant', value=0)
+
         return encoded_objs.unsqueeze(0).unsqueeze(0).to(device)
 
 

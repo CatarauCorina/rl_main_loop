@@ -1,4 +1,5 @@
 import random
+import sys
 import wandb
 import numpy as np
 import matplotlib
@@ -201,7 +202,7 @@ class TrainModel(object):
 
         return loss
 
-    def init_model(self, actions=4):
+    def init_model(self, actions=4, checkpoint_file=""):
         obs = self.env.reset()
         init_screen = self.process_frames(obs)
         _, _, screen_height, screen_width = init_screen.shape
@@ -211,12 +212,17 @@ class TrainModel(object):
             n_actions = actions
 
         policy_net = self.model_to_train(init_screen.squeeze(0).shape, n_actions).to(device)
+        optimizer = optim.RMSprop(policy_net.parameters())
+        optimizer = optim.Adam(policy_net.parameters(), lr=0.00001)
         target_net = self.model_to_train(init_screen.squeeze(0).shape, n_actions).to(device)
+        if checkpoint_file != "":
+            print(f"Trainning from checkpoint {checkpoint_file}")
+            checkpoint = torch.load(checkpoint_file)
+            policy_net.load_state_dict(checkpoint['model_state_dict'])
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         target_net.load_state_dict(policy_net.state_dict())
         target_net.eval()
 
-        optimizer = optim.RMSprop(policy_net.parameters())
-        optimizer = optim.Adam(policy_net.parameters(), lr=0.00001)
         if self.use_memory[0] is not None:
             self.memory = ReplayMemory(self.use_memory[1])
             self.train(target_net, policy_net, self.memory, self.params, optimizer, self.writer)
@@ -366,6 +372,10 @@ def process_frames_a(state):
 
 
 def main():
+    args = sys.argv[1:]
+    checkpoint_file = ""
+    if len(args) == 2 and args[0] == '-checkpoint':
+        checkpoint_file = args[1]
     params = {
         'batch_size': 32,
         'gamma': 0.99,
@@ -375,19 +385,18 @@ def main():
         'target_update': 1000
     }
 
-
     env_loader = AnimalAIEnvironmentLoader(
         random_config=False,
         config_file_name="config_multiple_209.yml",
         is_server=IS_SERVER)
     env = env_loader.get_animalai_env()
 
-    wandb_logger = Logger("baseline_dqn_no_target", project='rl_loop')
+    wandb_logger = Logger(f"{checkpoint_file}baseline_dqn_no_target", project='rl_loop')
     logger = wandb_logger.get_logger()
     trainer = TrainModel(DQN,
                          env, (True, 1000),
                          logger, params)
-    trainer.init_model()
+    trainer.init_model(checkpoint_file=checkpoint_file)
 
 
     # run_lin_dqn(env, params, logger)
