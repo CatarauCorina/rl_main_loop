@@ -106,6 +106,8 @@ class TrainModel(object):
         num_episodes = 3000
         steps_done = 0
         counter = 0
+        smallest_loss = 99999
+        loss = 0
         for i_episode in range(num_episodes):
             # Initialize the environment and state
             obs = self.env.reset()
@@ -155,7 +157,7 @@ class TrainModel(object):
                         {"Loss/episode": loss/(t+1), "Episode": i_episode})
 
                     break
-            if i_episode % 1000 == 0 and i_episode != 0:
+            if i_episode % 1000 == 0 and i_episode != 0 and loss < smallest_loss:
                 PATH = f"model_{i_episode}.ckp"
 
                 torch.save({
@@ -163,6 +165,7 @@ class TrainModel(object):
                     'model_state_dict': policy_net.state_dict(),
                     'optimizer_state_dict': optimizer.state_dict(),
                 }, PATH)
+                smallest_loss = loss
 
         return
 

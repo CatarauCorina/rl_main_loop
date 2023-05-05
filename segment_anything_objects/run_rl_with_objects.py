@@ -37,11 +37,13 @@ class TrainModel(object):
         self.params = params
         self.object_extractor = SegmentAnythingObjectExtractor()
 
-    def train(self, target_net, policy_net, memory, params, optimizer, writer, max_timesteps=5000):
+    def train(self, target_net, policy_net, memory, params, optimizer, writer, max_timesteps=2000):
         episode_durations = []
         num_episodes = 3000
         steps_done = 0
         counter = 0
+        smallest_loss = 99999
+        loss = 0
         for i_episode in range(num_episodes):
             # Initialize the environment and state
             obs = self.env.reset()
@@ -94,7 +96,7 @@ class TrainModel(object):
                         {"Loss/episode": loss/(t+1), "Episode": i_episode})
 
                     break
-            if i_episode % 100 == 0 and i_episode != 0:
+            if i_episode % 20 == 0 and i_episode != 0 and loss < smallest_loss:
                 PATH = f"model_with_obj_{i_episode}.ckp"
 
                 torch.save({
@@ -102,6 +104,7 @@ class TrainModel(object):
                     'model_state_dict': policy_net.state_dict(),
                     'optimizer_state_dict': optimizer.state_dict(),
                 }, PATH)
+                smallest_loss = loss
 
         return
 
