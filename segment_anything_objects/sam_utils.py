@@ -33,8 +33,8 @@ class SegmentAnythingObjectExtractor(object):
             transforms.ToPILImage(),
             transforms.Resize(128, interpolation=Image.CUBIC),
             transforms.ToTensor()])
-        self.im_height = 128
-        self.im_width = 128
+        self.im_height = 64
+        self.im_width = 64
         self.encoder = models.vgg16(pretrained=True).to(device).eval()
 
     def extract_objects(self, frame):
@@ -57,5 +57,22 @@ class SegmentAnythingObjectExtractor(object):
 
         return encoded_objs.unsqueeze(0).unsqueeze(0).to(device)
 
+    def find_objects_positions(self, frame):
+        objects_positions = []
+        frame_reduced = cv2.resize(frame, dsize=(self.im_height, self.im_width), interpolation=cv2.INTER_CUBIC)
+        masks = self.mask_generator.generate(frame_reduced)
+        masks = masks[:self.no_objects]
+        for mask in masks:
+            mask_inverted = np.invert(mask['segmentation']).astype(int)
+            mask_center = self.find_mask_center(mask_inverted)
+            objects_positions.append(mask_center)
+        return objects_positions
+
+
+    def find_mask_center(self, mask):
+        indices = np.where(mask == 0)
+        x_mean = np.mean(indices[1])
+        y_mean = np.mean(indices[0])
+        return (x_mean, y_mean)
 
 
